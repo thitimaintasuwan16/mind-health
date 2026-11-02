@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindCare - พื้นที่ปลอดภัยสำหรับสุขภาพใจของคุณ</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        mint: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                        },
+                        sage: {
+                            50: '#f4f7f5',
+                            100: '#e5ebe6',
+                            200: '#cce0ce',
+                            300: '#a3c7a5',
+                            400: '#75a878',
+                            500: '#528555',
+                            600: '#3f6842',
+                            700: '#335336',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Prompt', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Prompt', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(220, 252, 231, 0.6);
+        }
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.08); opacity: 1; }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 4s infinite ease-in-out;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f0fdf4; }
+        ::-webkit-scrollbar-thumb { background: #bbf7d0; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #86efac; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-sage-50 via-mint-50 to-emerald-50 text-sage-700 min-h-screen flex flex-col">
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed top-5 right-5 z-50 transform translate-y-[-200%] transition-transform duration-300 bg-white border border-mint-200 shadow-xl rounded-2xl p-4 flex items-center space-x-3 max-w-sm">
+        <div id="toast-icon" class="bg-mint-100 text-mint-600 p-2 rounded-xl"></div>
+        <div>
+            <h4 id="toast-title" class="font-semibold text-sm"></h4>
+            <p id="toast-message" class="text-xs text-gray-500"></p>
+        </div>
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-mint-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('home')">
+                <div class="bg-gradient-to-tr from-mint-500 to-emerald-400 p-2.5 rounded-2xl text-white shadow-md shadow-mint-200">
+                    <i data-lucide="heart-handshake" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-sage-700 to-mint-600 bg-clip-text text-transparent">MindCare</h1>
+                    <p class="text-xs text-gray-400">พื้นที่ดูแลใจ เติมพลังบวก</p>
+                </div>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex items-center space-x-1 lg:space-x-2">
+                <button onclick="switchTab('home')" class="nav-btn px-4 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-2 bg-mint-500 text-white shadow-md shadow-mint-200" data-tab="home">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span>หน้าแรก</span>
+                </button>
+                <button onclick="switchTab('profile')" class="nav-btn px-4 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-2 text-sage-600 hover:bg-mint-50" data-tab="profile">
+                    <i data-lucide="user" class="w-4 h-4"></i>
+                    <span>ข้อมูลส่วนตัว</span>
+                </button>
+                <button onclick="switchTab('assessment')" class="nav-btn px-4 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-2 text-sage-600 hover:bg-mint-50" data-tab="assessment">
+                    <i data-lucide="clipboard-check" class="w-4 h-4"></i>
+                    <span>ประเมินสุขภาพจิต</span>
+                </button>
+                <button onclick="switchTab('diary')" class="nav-btn px-4 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-2 text-sage-600 hover:bg-mint-50" data-tab="diary">
+                    <i data-lucide="book-open" class="w-4 h-4"></i>
+                    <span>ไดอารี่อารมณ์</span>
+                </button>
+                <button onclick="switchTab('games')" class="nav-btn px-4 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-2 text-sage-600 hover:bg-mint-50" data-tab="games">
+                    <i data-lucide="gamepad-2" class="w-4 h-4"></i>
+                    <span>เกมบำบัดผ่อนคลาย</span>
+                </button>
+                <button onclick="switchTab('telemed')" class="nav-btn px-4 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-2 text-sage-600 hover:bg-mint-50" data-tab="telemed">
+                    <i data-lucide="stethoscope" class="w-4 h-4"></i>
+                    <span>ปรึกษาแพทย์ & รพ.</span>
+                </button>
+            </nav>
+
+            <!-- Quick SOS / Help -->
+            <div class="flex items-center space-x-2">
+                <button onclick="openSosModal()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center space-x-1.5 transition shadow-sm animate-pulse">
+                    <i data-lucide="phone-call" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">สายด่วนสุขภาพจิต</span>
+                    <span>1323</span>
+                </button>
+                <!-- Mobile Hamburger -->
+                <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-xl text-sage-700 hover:bg-mint-100">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-mint-100 px-4 py-3 space-y-2">
+            <button onclick="switchTab('home'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 hover:bg-mint-50">
+                <i data-lucide="layout-dashboard" class="w-4 h-4 text-mint-600"></i><span>หน้าแรก</span>
+            </button>
+            <button onclick="switchTab('profile'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 hover:bg-mint-50">
+                <i data-lucide="user" class="w-4 h-4 text-mint-600"></i><span>ข้อมูลส่วนตัวสุขภาพ</span>
+            </button>
+            <button onclick="switchTab('assessment'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 hover:bg-mint-50">
+                <i data-lucide="clipboard-check" class="w-4 h-4 text-mint-600"></i><span>ประเมินสุขภาพจิต</span>
+            </button>
+            <button onclick="switchTab('diary'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 hover:bg-mint-50">
+                <i data-lucide="book-open" class="w-4 h-4 text-mint-600"></i><span>ไดอารี่อารมณ์</span>
+            </button>
+            <button onclick="switchTab('games'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 hover:bg-mint-50">
+                <i data-lucide="gamepad-2" class="w-4 h-4 text-mint-600"></i><span>เกมบำบัดผ่อนคลาย</span>
+            </button>
+            <button onclick="switchTab('telemed'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 hover:bg-mint-50">
+                <i data-lucide="stethoscope" class="w-4 h-4 text-mint-600"></i><span>ปรึกษาแพทย์ & รพ.</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- TAB 1: HOME / DASHBOARD -->
+        <section id="tab-home" class="tab-content space-y-8">
+            <!-- Welcome Banner -->
+            <div class="relative overflow-hidden bg-gradient-to-r from-mint-500 via-emerald-500 to-teal-600 rounded-3xl p-8 text-white shadow-xl shadow-mint-200/50 flex flex-col md:flex-row items-center justify-between">
+                <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="relative z-10 max-w-xl space-y-3 mb-6 md:mb-0">
+                    <span class="bg-white/20 text-white text-xs px-3 py-1 rounded-full font-medium inline-block backdrop-blur-md">🌟 วันนี้คุณรู้สึกอย่างไรบ้าง?</span>
+                    <h2 id="welcome-user-name" class="text-3xl sm:text-4xl font-bold leading-tight">สวัสดีครับคุณผู้ใช้งาน</h2>
+                    <p class="text-mint-50 text-sm sm:text-base font-light">เราพร้อมดูแลและรับฟังทุกความรู้สึกของคุณ ให้ทุกวันเป็นวันที่ใจเบาสบายขึ้น</p>
+                    <div class="pt-2 flex flex-wrap gap-3">
+                        <button onclick="switchTab('profile')" class="bg-white text-emerald-700 font-semibold px-5 py-2.5 rounded-xl shadow-lg hover:bg-mint-50 transition text-sm flex items-center space-x-2">
+                            <i data-lucide="user" class="w-4 h-4"></i>
+                            <span>จัดการข้อมูลส่วนตัว</span>
+                        </button>
+                        <button onclick="switchTab('assessment')" class="bg-emerald-600/50 hover:bg-emerald-600/70 border border-white/30 text-white font-medium px-5 py-2.5 rounded-xl transition text-sm flex items-center space-x-2 backdrop-blur-md">
+                            <i data-lucide="clipboard-check" class="w-4 h-4"></i>
+                            <span>ทำแบบประเมิน</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="relative z-10 flex items-center justify-center">
+                    <div class="w-44 h-44 bg-white/15 rounded-full flex items-center justify-center backdrop-blur-md border border-white/20 animate-pulse-slow shadow-inner">
+                        <i data-lucide="smile" class="w-24 h-24 text-white"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats & Status Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Stat Card 1 -->
+                <div class="glass-card p-6 rounded-3xl shadow-sm border border-mint-100 flex items-center space-x-4">
+                    <div class="p-4 bg-mint-100 text-mint-600 rounded-2xl">
+                        <i data-lucide="heart" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 font-medium">บันทึกอารมณ์ล่าสุด</p>
+                        <h3 id="dash-last-mood" class="text-lg font-bold text-sage-700">ยังไม่มีบันทึก</h3>
+                        <p id="dash-last-mood-date" class="text-xs text-mint-600">เริ่มบันทึกอารมณ์วันนี้กันเถอะ</p>
+                    </div>
+                </div>
+
+                <!-- Stat Card 2 -->
+                <div class="glass-card p-6 rounded-3xl shadow-sm border border-mint-100 flex items-center space-x-4">
+                    <div class="p-4 bg-emerald-100 text-emerald-600 rounded-2xl">
+                        <i data-lucide="shield-alert" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 font-medium">ผลประเมินสุขภาพจิตล่าสุด</p>
+                        <h3 id="dash-last-eval" class="text-lg font-bold text-sage-700">ยังไม่ได้ประเมิน</h3>
+                        <p id="dash-last-eval-desc" class="text-xs text-emerald-600">ทำแบบประเมิน PHQ-9</p>
+                    </div>
+                </div>
+
+                <!-- Stat Card 3 -->
+                <div class="glass-card p-6 rounded-3xl shadow-sm border border-mint-100 flex items-center space-x-4">
+                    <div class="p-4 bg-teal-100 text-teal-600 rounded-2xl">
+                        <i data-lucide="calendar-check" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 font-medium">นัดหมายแพทย์ของคุณ</p>
+                        <h3 id="dash-appointment" class="text-lg font-bold text-sage-700">ไม่มีนัดหมาย</h3>
+                        <p id="dash-appointment-time" class="text-xs text-teal-600">สามารถจองคิวออนไลน์ได้ทันที</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Quick Access Cards -->
+            <div class="space-y-4">
+                <h3 class="text-xl font-bold text-sage-700 flex items-center space-x-2">
+                    <i data-lucide="compass" class="w-5 h-5 text-mint-600"></i>
+                    <span>ฟีเจอร์แนะนำสำหรับคุณ</span>
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                    <!-- Card 0: Profile -->
+                    <div onclick="switchTab('profile')" class="glass-card p-6 rounded-3xl shadow-sm hover:shadow-md transition cursor-pointer border border-mint-100 group flex flex-col justify-between">
+                        <div>
+                            <div class="p-3 bg-sage-100 text-sage-600 rounded-2xl w-fit mb-4 group-hover:bg-sage-600 group-hover:text-white transition">
+                                <i data-lucide="user" class="w-6 h-6"></i>
+                            </div>
+                            <h4 class="font-bold text-base text-sage-700 mb-1">ข้อมูลส่วนตัว</h4>
+                            <p class="text-xs text-gray-500">จัดการข้อมูลสุขภาพ น้ำหนัก ส่วนสูง และโรคประจำตัว</p>
+                        </div>
+                        <div class="mt-6 flex items-center text-xs font-semibold text-sage-600 group-hover:translate-x-1 transition">
+                            <span>ดูข้อมูลส่วนตัว</span> <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                        </div>
+                    </div>
+
+                    <!-- Card 1 -->
+                    <div onclick="switchTab('assessment')" class="glass-card p-6 rounded-3xl shadow-sm hover:shadow-md transition cursor-pointer border border-mint-100 group flex flex-col justify-between">
+                        <div>
+                            <div class="p-3 bg-mint-100 text-mint-600 rounded-2xl w-fit mb-4 group-hover:bg-mint-500 group-hover:text-white transition">
+                                <i data-lucide="clipboard-check" class="w-6 h-6"></i>
+                            </div>
+                            <h4 class="font-bold text-base text-sage-700 mb-1">ประเมินสุขภาพจิต</h4>
+                            <p class="text-xs text-gray-500">ทดสอบภาวะซึมเศร้าและความเครียดด้วยเกณฑ์มาตรฐาน PHQ-9</p>
+                        </div>
+                        <div class="mt-6 flex items-center text-xs font-semibold text-mint-600 group-hover:translate-x-1 transition">
+                            <span>เริ่มทำแบบทดสอบ</span> <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div onclick="switchTab('diary')" class="glass-card p-6 rounded-3xl shadow-sm hover:shadow-md transition cursor-pointer border border-mint-100 group flex flex-col justify-between">
+                        <div>
+                            <div class="p-3 bg-emerald-100 text-emerald-600 rounded-2xl w-fit mb-4 group-hover:bg-emerald-500 group-hover:text-white transition">
+                                <i data-lucide="book-open" class="w-6 h-6"></i>
+                            </div>
+                            <h4 class="font-bold text-base text-sage-700 mb-1">ไดอารี่อารมณ์</h4>
+                            <p class="text-xs text-gray-500">บันทึกความรู้สึกพร้อมระบบวิเคราะห์ข้อความและระดับความเครียด</p>
+                        </div>
+                        <div class="mt-6 flex items-center text-xs font-semibold text-emerald-600 group-hover:translate-x-1 transition">
+                            <span>บันทึกความรู้สึก</span> <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div onclick="switchTab('games')" class="glass-card p-6 rounded-3xl shadow-sm hover:shadow-md transition cursor-pointer border border-mint-100 group flex flex-col justify-between">
+                        <div>
+                            <div class="p-3 bg-teal-100 text-teal-600 rounded-2xl w-fit mb-4 group-hover:bg-teal-500 group-hover:text-white transition">
+                                <i data-lucide="gamepad-2" class="w-6 h-6"></i>
+                            </div>
+                            <h4 class="font-bold text-base text-sage-700 mb-1">เกมบำบัดผ่อนคลาย</h4>
+                            <p class="text-xs text-gray-500">ฝึกกำหนดลมหายใจและเกมบับเบิ้ลกันกระแทกคลายเครียด</p>
+                        </div>
+                        <div class="mt-6 flex items-center text-xs font-semibold text-teal-600 group-hover:translate-x-1 transition">
+                            <span>เล่นเกมผ่อนคลาย</span> <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div onclick="switchTab('telemed')" class="glass-card p-6 rounded-3xl shadow-sm hover:shadow-md transition cursor-pointer border border-mint-100 group flex flex-col justify-between">
+                        <div>
+                            <div class="p-3 bg-sage-100 text-sage-600 rounded-2xl w-fit mb-4 group-hover:bg-sage-600 group-hover:text-white transition">
+                                <i data-lucide="stethoscope" class="w-6 h-6"></i>
+                            </div>
+                            <h4 class="font-bold text-base text-sage-700 mb-1">ปรึกษาแพทย์ & สิทธิรักษา</h4>
+                            <p class="text-xs text-gray-500">เช็คสิทธิการรักษา ประเมินค่าใช้จ่าย และนัดคิวพบจิตแพทย์</p>
+                        </div>
+                        <div class="mt-6 flex items-center text-xs font-semibold text-sage-600 group-hover:translate-x-1 transition">
+                            <span>ปรึกษาแพทย์เลย</span> <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Quote Card -->
+            <div class="glass-card p-6 rounded-3xl border border-mint-100 flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 sm:space-x-6">
+                <div class="flex items-center space-x-4">
+                    <div class="p-4 bg-mint-100 text-mint-600 rounded-2xl">
+                        <i data-lucide="sparkles" class="w-8 h-8"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-sage-700 text-base">ข้อความฮีลใจประจำวัน</h4>
+                        <p id="daily-quote" class="text-sm text-gray-600 italic mt-1">"การพักผ่อนไม่ใช่ความอ่อนแอ แต่เป็นการชาร์จพลังให้หัวใจได้เติบโตต่อ"</p>
+                    </div>
+                </div>
+                <button onclick="refreshQuote()" class="bg-mint-100 hover:bg-mint-200 text-mint-700 px-4 py-2 rounded-xl text-xs font-semibold transition shrink-0 flex items-center space-x-1">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                    <span>เปลี่ยนคำคม</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- TAB 1.5: PERSONAL PROFILE & HEALTH RECORDS -->
+        <section id="tab-profile" class="tab-content hidden space-y-8">
+            <div class="max-w-3xl mx-auto space-y-6">
+                <div class="text-center space-y-2">
+                    <span class="bg-mint-100 text-mint-700 text-xs px-3 py-1 rounded-full font-semibold">ข้อมูลส่วนตัวและสุขภาพเบื้องต้น</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-sage-700">ประวัติสุขภาพและข้อมูลผู้ใช้งาน</h2>
+                    <p class="text-sm text-gray-500">ข้อมูลของคุณจะถูกบันทึกไว้อย่างปลอดภัยในเครื่อง เพื่อใช้อ้างอิงในการประเมินและปรึกษาแพทย์</p>
+                </div>
+
+                <!-- Profile Form Card -->
+                <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-sm border border-mint-100 space-y-6">
+                    <form id="profile-form" onsubmit="saveProfile(event)" class="space-y-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs font-semibold text-sage-600 block mb-1">ชื่อ - นามสกุล:</label>
+                                <input type="text" id="prof-fullname" required class="w-full p-3 rounded-xl border border-mint-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-mint-400" placeholder="เช่น นายใจดี รักสงบ">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-sage-600 block mb-1">วันเดือนปีเกิด:</label>
+                                <input type="date" id="prof-dob" onchange="calculateAgeAndBmi()" required class="w-full p-3 rounded-xl border border-mint-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-mint-400">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="text-xs font-semibold text-sage-600 block mb-1">อายุ (ปี):</label>
+                                <input type="text" id="prof-age" readonly class="w-full p-3 rounded-xl border border-mint-200 text-sm bg-mint-50/70 text-sage-700 font-bold" placeholder="-">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-sage-600 block mb-1">น้ำหนัก (กิโลกรัม):</label>
+                                <input type="number" step="0.1" id="prof-weight" oninput="calculateAgeAndBmi()" required class="w-full p-3 rounded-xl border border-mint-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-mint-400" placeholder="เช่น 60">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-sage-600 block mb-1">ส่วนสูง (เซนติเมตร):</label>
+                                <input type="number" step="1" id="prof-height" oninput="calculateAgeAndBmi()" required class="w-full p-3 rounded-xl border border-mint-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-mint-400" placeholder="เช่น 170">
+                            </div>
+                        </div>
+
+                        <!-- BMI Display Box -->
+                        <div class="p-4 bg-mint-50/80 rounded-2xl border border-mint-200 flex items-center justify-between">
+                            <div>
+                                <span class="text-xs text-gray-400 font-medium">ดัชนีมวลกาย (BMI) คำนวณอัตโนมัติ:</span>
+                                <h4 id="prof-bmi-val" class="text-lg font-bold text-emerald-700">-</h4>
+                            </div>
+                            <div id="prof-bmi-status" class="text-xs font-semibold px-3 py-1 rounded-full bg-white text-emerald-600 border border-mint-200">-</div>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-semibold text-sage-600 block mb-1">โรคประจำตัว / ประวัติการรักษา (ถ้ามี):</label>
+                            <textarea id="prof-diseases" rows="3" class="w-full p-3 rounded-xl border border-mint-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-mint-400" placeholder="เช่น ไม่มี, โรคความดันโลหิตสูง, โรควิตกกังวล ฯลฯ"></textarea>
+                        </div>
+
+                        <div class="flex justify-end pt-2">
+                            <button type="submit" class="bg-mint-600 hover:bg-mint-700 text-white font-semibold px-6 py-3 rounded-xl shadow-md shadow-mint-200 transition text-sm flex items-center space-x-2">
+                                <i data-lucide="save" class="w-4 h-4"></i>
+                                <span>บันทึกข้อมูลส่วนตัว</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: ASSESSMENT (PHQ-9 / Mental Health) -->
+        <section id="tab-assessment" class="tab-content hidden space-y-8">
+            <div class="max-w-3xl mx-auto space-y-6">
+                <div class="text-center space-y-2">
+                    <span class="bg-mint-100 text-mint-700 text-xs px-3 py-1 rounded-full font-semibold">แบบประเมินสุขภาพจิตมาตรฐาน PHQ-9</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-sage-700">ประเมินภาวะซึมเศร้าและความเครียด</h2>
+                    <p class="text-sm text-gray-500">ใน 2 สัปดาห์ที่ผ่านมา รวมทั้งวันนี้ ท่านมีอาการเหล่านี้บ่อยแค่ไหน?</p>
+                </div>
+
+                <!-- Assessment Questionnaire Card -->
+                <div id="assessment-container" class="glass-card p-6 sm:p-8 rounded-3xl shadow-sm border border-mint-100 space-y-6">
+                    <div id="questions-list" class="space-y-6">
+                        <!-- Questions injected by JS -->
+                    </div>
+                    <div class="pt-4 border-t border-mint-100 flex justify-between items-center">
+                        <span id="assessment-progress" class="text-xs font-medium text-gray-500">ตอบแล้ว 0 / 9 ข้อ</span>
+                        <button onclick="submitAssessment()" class="bg-mint-600 hover:bg-mint-700 text-white font-semibold px-6 py-3 rounded-xl shadow-md shadow-mint-200 transition text-sm flex items-center space-x-2">
+                            <span>ดูผลการประเมิน</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Assessment Results Card (Hidden by default) -->
+                <div id="assessment-result" class="hidden glass-card p-6 sm:p-8 rounded-3xl shadow-lg border-2 border-mint-300 space-y-6 bg-white">
+                    <div class="text-center space-y-3">
+                        <div id="result-badge-icon" class="w-16 h-16 mx-auto rounded-full flex items-center justify-center text-white text-2xl shadow-md"></div>
+                        <h3 class="text-xl font-bold text-sage-700">ผลการประเมินสุขภาพจิตของคุณ</h3>
+                        <div id="result-score-box" class="inline-block px-4 py-1.5 rounded-full text-sm font-semibold"></div>
+                    </div>
+                    
+                    <div class="bg-mint-50/50 p-5 rounded-2xl border border-mint-100 space-y-2">
+                        <h4 class="font-semibold text-sm text-sage-700 flex items-center space-x-2">
+                            <i data-lucide="info" class="w-4 h-4 text-mint-600"></i>
+                            <span>คำแนะนำเบื้องต้นจากผู้เชี่ยวชาญ</span>
+                        </h4>
+                        <p id="result-recommendation" class="text-sm text-gray-600 leading-relaxed"></p>
+                    </div>
+
+                    <div id="hospital-recommendation-box" class="hidden bg-rose-50/60 p-5 rounded-2xl border border-rose-200 space-y-3">
+                        <div class="flex items-center space-x-2 text-rose-700 font-bold text-sm">
+                            <i data-lucide="alert-circle" class="w-5 h-5"></i>
+                            <span>คำแนะนำพิเศษ: ควรพบแพทย์หรือผู้เชี่ยวชาญด้านสุขภาพจิต</span>
+                        </div>
+                        <p class="text-xs text-rose-600">จากผลการประเมินพบว่าท่านมีความเสี่ยงในระดับปานกลางถึงรุนแรง เราขอแนะนำให้ท่านตรวจสอบสิทธิการรักษาหรือจองคิวพบแพทย์เพื่อรับคำปรึกษาที่ถูกต้อง</p>
+                        <div class="pt-2">
+                            <button onclick="switchTab('telemed')" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow transition flex items-center space-x-1.5 w-fit">
+                                <i data-lucide="stethoscope" class="w-4 h-4"></i>
+                                <span>ไปที่หน้าปรึกษาแพทย์ & เช็คสิทธิรักษา</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center pt-2">
+                        <button onclick="resetAssessment()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold px-5 py-2.5 rounded-xl transition flex items-center space-x-1.5">
+                            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                            <span>ทำแบบประเมินใหม่อีกครั้ง</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: MOOD & DAILY JOURNAL -->
+        <section id="tab-diary" class="tab-content hidden space-y-8">
+            <div class="max-w-4xl mx-auto space-y-8">
+                <div class="text-center space-y-2">
+                    <span class="bg-emerald-100 text-emerald-700 text-xs px-3 py-1 rounded-full font-semibold">ไดอารี่ฮีลใจ & บันทึกอารมณ์</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-sage-700">บันทึกความรู้สึกประจำวันของคุณ</h2>
+                    <p class="text-sm text-gray-500">บันทึกเรื่องราวและความรู้สึกในแต่ละวัน พร้อมระบบวิเคราะห์อารมณ์และระดับความเครียดเบื้องต้น</p>
+                </div>
+
+                <!-- Diary Input Form -->
+                <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-sm border border-mint-100 space-y-6">
+                    <h3 class="font-bold text-sage-700 text-base flex items-center space-x-2">
+                        <i data-lucide="pen-tool" class="w-5 h-5 text-emerald-600"></i>
+                        <span>วันนี้คุณรู้สึกอย่างไรบ้าง?</span>
+                    </h3>
+                    
+                    <!-- Mood Selector Buttons -->
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                        <button type="button" onclick="selectMood('มีความสุข', '😊', 'bg-emerald-500 text-white shadow-md')" class="mood-btn p-3.5 rounded-2xl border border-mint-200 bg-white hover:bg-mint-50 transition flex flex-col items-center space-y-1.5 text-sage-700 font-medium text-xs">
+                            <span class="text-2xl">😊</span>
+                            <span>มีความสุข</span>
+                        </button>
+                        <button type="button" onclick="selectMood('สงบผ่อนคลาย', '🌿', 'bg-teal-500 text-white shadow-md')" class="mood-btn p-3.5 rounded-2xl border border-mint-200 bg-white hover:bg-mint-50 transition flex flex-col items-center space-y-1.5 text-sage-700 font-medium text-xs">
+                            <span class="text-2xl">🌿</span>
+                            <span>สงบผ่อนคลาย</span>
+                        </button>
+                        <button type="button" onclick="selectMood('เครียด/กังวล', '🌪️', 'bg-amber-500 text-white shadow-md')" class="mood-btn p-3.5 rounded-2xl border border-mint-200 bg-white hover:bg-mint-50 transition flex flex-col items-center space-y-1.5 text-sage-700 font-medium text-xs">
+                            <span class="text-2xl">🌪️</span>
+                            <span>เครียด/กังวล</span>
+                        </button>
+                        <button type="button" onclick="selectMood('เศร้า/หดหู่', '🌧️', 'bg-sky-500 text-white shadow-md')" class="mood-btn p-3.5 rounded-2xl border border-mint-200 bg-white hover:bg-mint-50 transition flex flex-col items-center space-y-1.5 text-sage-700 font-medium text-xs">
+                            <span class="text-2xl">🌧️</span>
+                            <span>เศร้า/หดหู่</span>
+                        </button>
+                        <button type="button" onclick="selectMood('เหนื่อยล้า', '🔋', 'bg-purple-500 text-white shadow-md')" class="mood-btn p-3.5 rounded-2xl border border-mint-200 bg-white hover:bg-mint-50 transition flex flex-col items-center space-y-1.5 text-sage-700 font-medium text-xs">
+                            <span class="text-2xl">🔋</span>
+                            <span>เหนื่อยล้า</span>
+                        </button>
+                    </div>
+
+                    <!-- Textarea for Diary Note -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-semibold text-sage-600 block">เล่าเรื่องราวหรือความรู้สึกวันนี้ (ระบบจะช่วยวิเคราะห์อารมณ์และระดับความเครียดให้อัตโนมัติ):</label>
+                        <textarea id="diary-text" rows="4" class="w-full p-4 rounded-2xl border border-mint-200 focus:outline-none focus:ring-2 focus:ring-mint-400 text-sm bg-white/80" placeholder="วันนี้เจอเรื่องอะไรมาบ้าง? อยากระบายอะไร เขียนลงไปได้เลยนะ พื้นที่นี้ปลอดภัยเสมอ..."></textarea>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button onclick="saveDiaryEntry()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-3 rounded-xl shadow-md shadow-emerald-200 transition text-sm flex items-center space-x-2">
+                            <i data-lucide="save" class="w-4 h-4"></i>
+                            <span>บันทึกไดอารี่</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Analysis & Diary History -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Stress AI Analysis Card -->
+                    <div class="glass-card p-6 rounded-3xl shadow-sm border border-mint-100 space-y-4 md:col-span-1">
+                        <h4 class="font-bold text-sage-700 text-sm flex items-center space-x-2">
+                            <i data-lucide="brain" class="w-4 h-4 text-emerald-600"></i>
+                            <span>วิเคราะห์สภาวะทางจิตใจ</span>
+                        </h4>
+                        <div id="ai-analysis-box" class="p-4 bg-emerald-50/60 rounded-2xl border border-emerald-100 space-y-2">
+                            <p class="text-xs text-gray-500">บันทึกไดอารี่ล่าสุดเพื่อให้ระบบวิเคราะห์ความเครียดและให้คำแนะนำเฉพาะคุณ</p>
+                        </div>
+                    </div>
+
+                    <!-- Diary History List -->
+                    <div class="glass-card p-6 rounded-3xl shadow-sm border border-mint-100 space-y-4 md:col-span-2">
+                        <div class="flex items-center justify-between">
+                            <h4 class="font-bold text-sage-700 text-sm flex items-center space-x-2">
+                                <i data-lucide="history" class="w-4 h-4 text-emerald-600"></i>
+                               <span>ประวัติไดอารี่ย้อนหลัง</span>
+                            </h4>
+                            <span id="diary-count" class="text-xs font-medium text-gray-400">0 รายการ</span>
+                        </div>
+                        <div id="diary-list" class="space-y-3 max-h-96 overflow-y-auto pr-2">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: RELAXATION MINI-GAMES -->
+        <section id="tab-games" class="tab-content hidden space-y-8">
+            <div class="max-w-4xl mx-auto space-y-8">
+                <div class="text-center space-y-2">
+                    <span class="bg-teal-100 text-teal-700 text-xs px-3 py-1 rounded-full font-semibold">ห้องผ่อนคลายความเครียด</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-sage-700">มินิเกมจิตบำบัด & ฮีลใจ</h2>
+                    <p class="text-sm text-gray-500">เลือกกิจกรรมผ่อนคลายสมอง ลดความวิตกกังวล และฝึกสมาธิได้ง่ายๆ</p>
+                </div>
+
+                <!-- Game Selector Tabs -->
+                <div class="flex flex-wrap justify-center gap-2">
+                    <button onclick="switchGame('breathing')" id="btn-game-breathing" class="game-tab-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition bg-teal-500 text-white shadow-md shadow-teal-200">
+                        🌬️ ฝึกกำหนดลมหายใจ
+                    </button>
+                    <button onclick="switchGame('bubble')" id="btn-game-bubble" class="game-tab-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition bg-white border border-teal-200 text-sage-700 hover:bg-teal-50">
+                        🫧 บับเบิ้ลกันกระแทก
+                    </button>
+                    <button onclick="switchGame('platesmash')" id="btn-game-platesmash" class="game-tab-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition bg-white border border-teal-200 text-sage-700 hover:bg-teal-50">
+                        🍽️ ทุบจานระบายเครียด
+                    </button>
+                    <button onclick="switchGame('meditation')" id="btn-game-meditation" class="game-tab-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition bg-white border border-teal-200 text-sage-700 hover:bg-teal-50">
+                        🎧 เสียงธรรมชาติ & นำสมาธิ
+                    </button>
+                </div>
+
+                <!-- GAME 1: BREATHING EXERCISE -->
+                <div id="game-breathing" class="glass-card p-8 rounded-3xl shadow-sm border border-teal-100 text-center space-y-8 max-w-2xl mx-auto">
+                    <div class="space-y-2">
+                        <h3 class="text-xl font-bold text-sage-700">การฝึกหายใจ 4-7-8 เพื่อความผ่อนคลาย</h3>
+                        <p class="text-xs text-gray-500">ช่วยลดอัตราการเต้นของหัวใจ คลายความกังวล และปรับสมดุลอารมณ์</p>
+                    </div>
+
+                    <!-- Breathing Circle Animation -->
+                    <div class="relative w-56 h-56 mx-auto flex items-center justify-center">
+                        <div id="breath-circle" class="absolute w-40 h-40 bg-teal-300/60 rounded-full transition-all duration-1000 ease-in-out shadow-lg shadow-teal-200 flex items-center justify-center">
+                            <div class="w-28 h-28 bg-teal-500 rounded-full flex items-center justify-center text-white font-bold shadow-inner">
+                                <span id="breath-count" class="text-2xl">กดเริ่ม</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="breath-status" class="text-lg font-semibold text-teal-700">กดปุ่ม "เริ่มฝึกหายใจ" เพื่อเริ่มต้น</div>
+
+                    <div class="flex justify-center space-x-4">
+                        <button onclick="startBreathing()" id="breath-start-btn" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold px-6 py-3 rounded-xl shadow-md shadow-teal-200 transition text-sm flex items-center space-x-2">
+                            <i data-lucide="play" class="w-4 h-4"></i>
+                            <span>เริ่มฝึกหายใจ</span>
+                        </button>
+                        <button onclick="stopBreathing()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-xl transition text-sm">
+                            หยุด
+                        </button>
+                    </div>
+                </div>
+
+                <!-- GAME 2: BUBBLE POP -->
+                <div id="game-bubble" class="hidden glass-card p-8 rounded-3xl shadow-sm border border-teal-100 space-y-6 max-w-2xl mx-auto">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold text-sage-700">กดบับเบิ้ลกันกระแทกคลายเครียด</h3>
+                            <p class="text-xs text-gray-500">จิ้มบับเบิ้ลเพื่อปลดปล่อยความเครียดและความหงุดหงิดออกไป</p>
+                        </div>
+                        <div class="bg-teal-100 text-teal-800 px-4 py-2 rounded-2xl text-sm font-bold shadow-inner">
+                            แตกไปแล้ว: <span id="bubble-score">0</span> ฟอง
+                        </div>
+                    </div>
+
+                    <!-- Bubble Grid Container -->
+                    <div id="bubble-grid" class="grid grid-cols-6 gap-3 p-4 bg-teal-50/50 rounded-2xl border border-teal-100 min-h-[280px]">
+                        <!-- Injected by JS -->
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <button onclick="resetBubbles()" class="bg-teal-100 hover:bg-teal-200 text-teal-700 text-xs font-semibold px-4 py-2.5 rounded-xl transition flex items-center space-x-1.5">
+                            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                            <span>เติมบับเบิ้ลใหม่</span>
+                        </button>
+                        <span class="text-xs text-gray-400">💡 เคล็ดลับ: การกดบับเบิ้ลช่วยลดฮอร์โมนความเครียดในสมองได้</span>
+                    </div>
+                </div>
+
+                <!-- GAME 3: PLATE SMASHING & STRESS WRITING GAME (UPDATED) -->
+                <div id="game-platesmash" class="hidden glass-card p-8 rounded-3xl shadow-sm border border-teal-100 space-y-6 max-w-2xl mx-auto text-center">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
+                        <div class="text-left">
+                            <h3 class="text-xl font-bold text-sage-700">🔨 ทุบจานระบายเครียด (Plate Hammering)</h3>
+                            <p class="text-xs text-gray-500">พิมพ์ระบายสิ่งอึดอัดใจ ความโกรธ หรือความเครียดลงบนจาน แล้วใช้ค้อนทุบให้แตกละเอียดเพื่อปลดปล่อยอารมณ์!</p>
+                        </div>
+                        <div class="bg-amber-100 text-amber-800 px-4 py-2 rounded-2xl text-sm font-bold shadow-inner shrink-0">
+                            จานที่ทุบแตก: <span id="plate-score">0</span> ใบ
+                        </div>
+                    </div>
+
+                    <!-- Stress Input Box before Smashing -->
+                    <div class="space-y-2 text-left">
+                        <label class="text-xs font-semibold text-sage-600 block flex items-center space-x-1.5">
+                            <i data-lucide="edit-3" class="w-4 h-4 text-teal-600"></i>
+                            <span>พิมพ์ข้อความสิ่งที่คุณอยากระบายหรือความเครียดในตอนนี้:</span>
+                        </label>
+                        <div class="flex gap-2">
+                            <input type="text" id="stress-input-text" placeholder="เช่น งานเยอะเกินไป, เหนื่อยกับปัญหา, เบื่อหัวหน้า..." class="flex-1 p-3 rounded-xl border border-teal-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-teal-400">
+                            <button onclick="applyStressText()" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-xl text-xs font-semibold transition shrink-0 shadow">
+                                เขียนลงจาน
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Plate Smashing / Hammering Arena -->
+                    <div id="plate-arena" class="relative w-full h-80 bg-gradient-to-b from-slate-800 to-slate-900 rounded-2xl border-4 border-slate-700 shadow-inner overflow-hidden flex flex-col items-center justify-center cursor-pointer select-none" onclick="smashPlate(event)">
+                        <!-- Target Graphic Background -->
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
+                            <div class="w-48 h-48 border-4 border-dashed border-white rounded-full flex items-center justify-center">
+                                <div class="w-24 h-24 border-2 border-white rounded-full"></div>
+                            </div>
+                        </div>
+
+                        <!-- Active Plate with User Text Display -->
+                        <div id="plate-display" class="relative z-10 transition-transform duration-200 hover:scale-105 flex flex-col items-center">
+                            <div class="w-48 h-48 bg-gradient-to-tr from-gray-100 via-white to-gray-200 rounded-full shadow-2xl border-8 border-gray-300 flex flex-col items-center justify-center p-4 relative group text-center">
+                                <span class="text-2xl mb-1">🍽️</span>
+                                <p id="plate-written-text" class="text-xs font-bold text-rose-600 line-clamp-3 px-2 break-words max-w-[150px]">"ความเครียด & ความอึดอัด"</p>
+                                <div class="absolute inset-0 rounded-full border border-gray-400/50 pointer-events-none"></div>
+                            </div>
+                            <span class="mt-4 bg-white/20 backdrop-blur-md text-white text-xs px-4 py-1.5 rounded-full font-semibold shadow border border-white/20 animate-pulse flex items-center space-x-1.5">
+                                <i data-lucide="hammer" class="w-3.5 h-3.5"></i>
+                                <span>คลิกที่จานเพื่อใช้ค้อนทุบให้แตก! 🔨💥</span>
+                            </span>
+                        </div>
+
+                        <!-- Smashing Shards Effect Container -->
+                        <div id="shards-container" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+                        <p id="plate-affirmation" class="text-xs font-semibold text-teal-700 italic">"ทุบความเครียดและความขุ่นข้องหมองใจทิ้งไป ให้ใจเบาสบายขึ้น"</p>
+                        <button onclick="resetPlates()" class="bg-teal-100 hover:bg-teal-200 text-teal-700 text-xs font-semibold px-4 py-2.5 rounded-xl transition flex items-center space-x-1.5 shrink-0">
+                            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                            <span>หยิบจานใบใหม่</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- GAME 4: GUIDED MEDITATION & NATURE SOUNDS (NEW) -->
+                <div id="game-meditation" class="hidden glass-card p-8 rounded-3xl shadow-sm border border-teal-100 space-y-6 max-w-2xl mx-auto">
+                    <div class="text-center space-y-2">
+                        <h3 class="text-xl font-bold text-sage-700">🎧 เสียงธรรมชาติบำบัด & นำสมาธิ</h3>
+                        <p class="text-xs text-gray-500">เลือกบรรยากาศเสียงธรรมชาติที่ช่วยผ่อนคลายสมอง ลดความวิตกกังวล และช่วยให้นอนหลับได้ดีขึ้น (สร้างเสียงแบบเรียลไทม์ผ่านระบบ Web Audio API)</p>
+                    </div>
+
+                    <!-- Sound Track Selector Cards -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="selectSoundTrack('rain')" id="track-btn-rain" class="track-btn p-4 rounded-2xl border-2 border-teal-300 bg-teal-50 flex flex-col items-center space-y-2 transition shadow-sm">
+                            <span class="text-3xl">🌧️</span>
+                            <span class="font-bold text-sm text-teal-900">เสียงฝนตกปรอยๆ</span>
+                            <span class="text-[10px] text-gray-500">ผ่อนคลาย สงบใจ</span>
+                        </button>
+                        <button onclick="selectSoundTrack('waves')" id="track-btn-waves" class="track-btn p-4 rounded-2xl border-2 border-teal-100 bg-white flex flex-col items-center space-y-2 transition shadow-sm hover:bg-teal-50/50">
+                            <span class="text-3xl">🌊</span>
+                            <span class="font-bold text-sm text-sage-700">เสียงคลื่นทะเล</span>
+                            <span class="text-[10px] text-gray-500">ซัดคลายความเครียด</span>
+                        </button>
+                        <button onclick="selectSoundTrack('forest')" id="track-btn-forest" class="track-btn p-4 rounded-2xl border-2 border-teal-100 bg-white flex flex-col items-center space-y-2 transition shadow-sm hover:bg-teal-50/50">
+                            <span class="text-3xl">🌲</span>
+                            <span class="font-bold text-sm text-sage-700">เสียงลมในป่าสน</span>
+                            <span class="text-[10px] text-gray-500">ความสงบแห่งธรรมชาติ</span>
+                        </button>
+                        <button onclick="selectSoundTrack('stream')" id="track-btn-stream" class="track-btn p-4 rounded-2xl border-2 border-teal-100 bg-white flex flex-col items-center space-y-2 transition shadow-sm hover:bg-teal-50/50">
+                            <span class="text-3xl">💧</span>
+                            <span class="font-bold text-sm text-sage-700">เสียงธารน้ำไหล</span>
+                            <span class="text-[10px] text-gray-500">ปรับสมดุลสมาธิ</span>
+                        </button>
+                    </div>
+
+                    <!-- Active Sound Player Controls -->
+                    <div class="p-5 bg-teal-900 text-white rounded-2xl shadow-lg space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] text-teal-300 uppercase tracking-wider font-bold">กำลังเล่นเสียงบรรยากาศ</span>
+                                <h4 id="active-track-title" class="text-lg font-bold">🌧️ เสียงฝนตกปรอยๆ (Rainfall)</h4>
+                            </div>
+                            <div id="audio-playing-indicator" class="flex items-center space-x-1">
+                                <span class="w-1.5 h-4 bg-teal-400 animate-pulse rounded-full"></span>
+                                <span class="w-1.5 h-6 bg-teal-300 animate-pulse rounded-full" style="animation-delay: 150ms"></span>
+                                <span class="w-1.5 h-3 bg-teal-400 animate-pulse rounded-full" style="animation-delay: 300ms"></span>
+                            </div>
+                        </div>
+
+                        <!-- Volume & Timer Sliders -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-teal-800">
+                            <div>
+                                <label class="text-xs text-teal-300 block mb-1">ระดับเสียง (Volume):</label>
+                                <input type="range" id="audio-volume" min="0" max="1" step="0.05" value="0.5" oninput="updateVolume(this.value)" class="w-full accent-teal-400 cursor-pointer">
+                            </div>
+                            <div>
+                                <label class="text-xs text-teal-300 block mb-1">ตั้งเวลาปิดอัตโนมัติ:</label>
+                                <select id="meditation-timer" onchange="setMeditationTimer(this.value)" class="w-full p-2 rounded-xl bg-teal-800 border border-teal-700 text-xs text-white focus:outline-none">
+                                    <option value="0">เล่นต่อเนื่อง (ไม่จำกัดเวลา)</option>
+                                    <option value="5">5 นาที</option>
+                                    <option value="15">15 นาที</option>
+                                    <option value="30">30 นาที</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Play / Pause Buttons -->
+                        <div class="flex items-center justify-center space-x-4 pt-2">
+                            <button onclick="toggleAudioPlayback()" id="audio-toggle-btn" class="bg-teal-400 hover:bg-teal-300 text-teal-950 font-bold px-8 py-3 rounded-xl shadow-md transition text-sm flex items-center space-x-2">
+                                <i data-lucide="play" id="audio-btn-icon" class="w-4 h-4"></i>
+                                <span id="audio-btn-text">เริ่มเล่นเสียงธรรมชาติ</span>
+                            </button>
+                            <button onclick="stopAudioPlayback()" class="bg-teal-800 hover:bg-teal-700 text-teal-200 px-4 py-3 rounded-xl text-sm font-semibold transition">
+                                หยุดเสียง
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: TELEMEDICINE & HOSPITAL REFERRAL -->
+        <section id="tab-telemed" class="tab-content hidden space-y-8">
+            <div class="max-w-5xl mx-auto space-y-8">
+                <div class="text-center space-y-2">
+                    <span class="bg-sage-100 text-sage-700 text-xs px-3 py-1 rounded-full font-semibold">บริการปรึกษาแพทย์ & สิทธิรักษา</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-sage-700">ตรวจสอบสิทธิการรักษา และค้นหาโรงพยาบาลสุขภาพจิตทั่วไทย</h2>
+                    <p class="text-sm text-gray-500">ค้นหาโรงพยาบาลเฉพาะทางจิตเวชและโรงพยาบาลทั่วไปครอบคลุมทุกภูมิภาค พร้อมกรองตามสิทธิการรักษาและจองคิวออนไลน์</p>
+                </div>
+
+                <!-- Hospital & Rights Search Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Rights Calculator & Checker -->
+                    <div class="glass-card p-6 rounded-3xl shadow-sm border border-mint-100 space-y-6 lg:col-span-1">
+                        <h3 class="font-bold text-sage-700 text-base flex items-center space-x-2">
+                            <i data-lucide="shield-check" class="w-5 h-5 text-mint-600"></i>
+                            <span>ตรวจสอบสิทธิ & ค่าใช้จ่าย</span>
+                        </h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs font-semibold text-sage-600 block mb-1.5">เลือกสิทธิการรักษาของคุณ:</label>
+                                <select id="treatment-right" onchange="filterHospitals(); calculateRights();" class="w-full p-3 rounded-xl border border-mint-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-mint-400">
+                                    <option value="all">ทุกสิทธิการรักษา</option>
+                                    <option value="gold">สิทธิบัตรทอง 30 บาท (รพ.ตามสิทธิ)</option>
+                                    <option value="social">สิทธิประกันสังคม (รพ.ตามสิทธิ)</option>
+                                    <option value="civil">สิทธิข้าราชการ / รัฐวิสาหกิจ</option>
+                                    <option value="insurance">ประกันสุขภาพเอกชน (IPD/OPD)</option>
+                                    <option value="self">ชำระเงินเอง / ทั่วไป</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="text-xs font-semibold text-sage-600 block mb-1.5">รูปแบบการปรึกษาแพทย์:</label>
+                                <select id="consult-type" onchange="calculateRights()" class="w-full p-3 rounded-xl border border-mint-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-mint-400">
+                                    <option value="tele">ปรึกษาแพทย์ออนไลน์ (Telemedicine)</option>
+                                    <option value="onsite">พบแพทย์ที่โรงพยาบาล (On-site)</option>
+                                </select>
+                            </div>
+
+                            <div class="p-4 bg-mint-50 rounded-2xl border border-mint-200 space-y-2">
+                                <span class="text-xs text-gray-400 font-medium">ผลการประเมินสิทธิ & ค่าใช้จ่ายเบื้องต้น</span>
+                                <div id="right-cost-display" class="text-lg font-bold text-emerald-700">0 - 30 บาท</div>
+                                <p id="right-desc-display" class="text-xs text-gray-600">ใช้สิทธิตามเงื่อนไขโรงพยาบาล ไม่เสียค่าใช้จ่ายเพิ่มเติม (กรณีตรงตามข้อบ่งชี้แพทย์)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recommended Hospitals List based on user rights & filters -->
+                    <div class="glass-card p-6 rounded-3xl shadow-sm border border-mint-100 space-y-6 lg:col-span-2">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                            <h3 class="font-bold text-sage-700 text-base flex items-center space-x-2">
+                                <i data-lucide="hospital" class="w-5 h-5 text-mint-600"></i>
+                                <span>รายชื่อโรงพยาบาลและคลินิกสุขภาพจิต</span>
+                            </h3>
+                            <div class="flex items-center space-x-2 w-full sm:w-auto">
+                                <input type="text" id="hospital-search-input" onkeyup="filterHospitals()" placeholder="ค้นหาชื่อโรงพยาบาลหรือจังหวัด..." class="w-full sm:w-48 px-3 py-1.5 rounded-xl border border-mint-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-mint-400">
+                                <select id="region-filter" onchange="filterHospitals()" class="px-3 py-1.5 rounded-xl border border-mint-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-mint-400">
+                                    <option value="all">ทุกภูมิภาค</option>
+                                    <option value="bkk">กรุงเทพฯ และปริมณฑล</option>
+                                    <option value="central">ภาคกลาง</option>
+                                    <option value="north">ภาคเหนือ</option>
+                                    <option value="northeast">ภาคตะวันออกเฉียงเหนือ</option>
+                                    <option value="south">ภาคใต้</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="hospital-list-container" class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Appointments History Card -->
+                <div class="glass-card p-6 rounded-3xl shadow-sm border border-mint-100 space-y-4">
+                    <h3 class="font-bold text-sage-700 text-base flex items-center space-x-2">
+                        <i data-lucide="calendar" class="w-5 h-5 text-mint-600"></i>
+                        <span>รายการนัดหมายแพทย์ของคุณ</span>
+                    </h3>
+                    <div id="appointment-list" class="space-y-3">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white/80 backdrop-blur-md border-t border-mint-100 mt-12 py-8 text-center text-xs text-gray-500 space-y-2">
+        <div class="flex items-center justify-center space-x-2 text-sage-700 font-bold text-sm">
+            <i data-lucide="heart-handshake" class="w-5 h-5 text-mint-600"></i>
+            <span>MindCare - แพลตฟอร์มดูแลสุขภาพใจและสุขภาพจิต</span>
+        </div>
+        <p>หากคุณมีความรู้สึกสิ้นหวังหรือต้องการความช่วยเหลือด่วน สามารถโทรปรึกษาสายด่วนสุขภาพจิต 1323 ได้ตลอด 24 ชั่วโมง (ฟรี)</p>
+        <p class="text-gray-400">© 2026 MindCare Wellness. สงวนลิขสิทธิ์ทุกประการ.</p>
+    </footer>
+
+    <!-- MODAL: BOOKING APPOINTMENT -->
+    <div id="booking-modal" class="fixed inset-0 z-50 bg-sage-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-card bg-white p-6 sm:p-8 rounded-3xl shadow-2xl max-w-md w-full space-y-6 border border-mint-200">
+            <div class="flex items-center justify-between">
+                <h3 id="booking-modal-title" class="text-lg font-bold text-sage-700">จองคิวพบแพทย์ออนไลน์</h3>
+                <button onclick="closeBookingModal()" class="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form id="booking-form" onsubmit="submitBooking(event)" class="space-y-4">
+                <input type="hidden" id="book-hospital-name">
+                <div>
+                    <label class="text-xs font-semibold text-sage-600 block mb-1">ชื่อ-นามสกุล ผู้ป่วย:</label>
+                    <input type="text" id="book-name" required class="w-full p-3 rounded-xl border border-mint-200 text-sm focus:outline-none focus:ring-2 focus:ring-mint-400" placeholder="กรอกชื่อและนามสกุลของคุณ">
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-sage-600 block mb-1">เบอร์โทรศัพท์ติดต่อ:</label>
+                    <input type="tel" id="book-phone" required class="w-full p-3 rounded-xl border border-mint-200 text-sm focus:outline-none focus:ring-2 focus:ring-mint-400" placeholder="0812345678">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold text-sage-600 block mb-1">วันที่ต้องการนัดหมาย:</label>
+                        <input type="date" id="book-date" required class="w-full p-3 rounded-xl border border-mint-200 text-sm focus:outline-none focus:ring-2 focus:ring-mint-400">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-sage-600 block mb-1">ช่วงเวลา:</label>
+                        <select id="book-time" class="w-full p-3 rounded-xl border border-mint-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-mint-400">
+                            <option value="09:00 - 10:00 น.">09:00 - 10:00 น.</option>
+                            <option value="10:30 - 11:30 น.">10:30 - 11:30 น.</option>
+                            <option value="13:00 - 14:00 น.">13:00 - 14:00 น.</option>
+                            <option value="15:00 - 16:00 น.">15:00 - 16:00 น.</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-sage-600 block mb-1">อาการเบื้องต้นหรือความต้องการ:</label>
+                    <textarea id="book-note" rows="3" class="w-full p-3 rounded-xl border border-mint-200 text-sm focus:outline-none focus:ring-2 focus:ring-mint-400" placeholder="เช่น มีอาการนอนไม่หลับ เครียดสะสม หรือต้องการปรึกษาแพทย์จิตเวช"></textarea>
+                </div>
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="closeBookingModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl text-sm font-semibold transition">
+                        ยกเลิก
+                    </button>
+                    <button type="submit" class="flex-1 bg-mint-600 hover:bg-mint-700 text-white py-3 rounded-xl text-sm font-semibold shadow-md shadow-mint-200 transition">
+                        ยืนยันจองคิว
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: SOS / EMERGENCY -->
+    <div id="sos-modal" class="fixed inset-0 z-50 bg-sage-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-card bg-white p-6 sm:p-8 rounded-3xl shadow-2xl max-w-md w-full space-y-6 border border-rose-200 text-center">
+            <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto text-2xl shadow-inner">
+                <i data-lucide="phone-call" class="w-8 h-8"></i>
+            </div>
+            <div class="space-y-2">
+                <h3 class="text-xl font-bold text-rose-700">สายด่วนให้ความช่วยเหลือวิกฤต</h3>
+                <p class="text-xs text-gray-500">หากท่านหรือคนใกล้ชิดกำลังเผชิญภาวะวิกฤตทางอารมณ์ มีความคิดทำร้ายตัวเอง สามารถติดต่อเจ้าหน้าที่ผู้เชี่ยวชาญได้ทันที ตลอด 24 ชม.</p>
+            </div>
+            <div class="space-y-3">
+                <a href="tel:1323" class="block w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-rose-200 transition text-base flex items-center justify-center space-x-2">
+                    <i data-lucide="phone" class="w-5 h-5"></i>
+                    <span>โทรสายด่วนสุขภาพจิต 1323 (ฟรี)</span>
+                </a>
+                <a href="tel:1669" class="block w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-amber-200 transition text-base flex items-center justify-center space-x-2">
+                    <i data-lucide="ambulance" class="w-5 h-5"></i>
+                    <span>โทรสายด่วนการแพทย์ฉุกเฉิน 1669</span>
+                </a>
+            </div>
+            <button onclick="closeSosModal()" class="text-xs text-gray-400 hover:text-gray-600 underline pt-2">
+                ปิดหน้าต่างนี้
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Initialize Lucide Icons
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            loadProfileData();
+            loadDashboardData();
+            renderQuestions();
+            loadDiaryHistory();
+            loadAppointments();
+            initBubbles();
+            calculateRights();
+            renderHospitals(hospitalsData);
+        });
+
+        // Comprehensive Hospitals Database in Thailand
+        const hospitalsData = [
+            {
+                name: "สถาบันจิตเวชศาสตร์สมเด็จเจ้าพระยา",
+                type: "รพ.เฉพาะทาง (รัฐ)",
+                region: "bkk",
+                province: "กรุงเทพมหานคร",
+                address: "เขตคลองสาน กรุงเทพฯ",
+                rights: ["gold", "social", "civil", "insurance", "self"],
+                phone: "02-442-2500",
+                note: "เปิดบริการทุกวัน 24 ชม. รองรับทุกสิทธิการรักษา"
+            },
+            {
+                name: "โรงพยาบาลศรีธัญญา",
+                type: "รพ.เฉพาะทาง (รัฐ)",
+                region: "bkk",
+                province: "นนทบุรี",
+                address: "อำเภอเมือง จังหวัดนนทบุรี",
+                rights: ["gold", "social", "civil", "insurance", "self"],
+                phone: "02-528-7800",
+                note: "สถาบันสุขภาพจิตชั้นนำ มีระบบ Teleconsult และสายด่วนสุขภาพจิต"
+            },
+            {
+                name: "โรงพยาบาลจิตเวชขอนแก่นราชนครินทร์",
+                type: "รพ.เฉพาะทาง (รัฐ)",
+                region: "northeast",
+                province: "ขอนแก่น",
+                address: "อำเภอเมือง จังหวัดขอนแก่น",
+                rights: ["gold", "social", "civil", "insurance", "self"],
+                phone: "043-228-095",
+                note: "ศูนย์เชี่ยวชาญสุขภาพจิตภาคตะวันออกเฉียงเหนือ"
+            },
+            {
+                name: "โรงพยาบาลสวนปรุง",
+                type: "รพ.เฉพาะทาง (รัฐ)",
+                region: "north",
+                province: "เชียงใหม่",
+                address: "อำเภอเมือง จังหวัดเชียงใหม่",
+                rights: ["gold", "social", "civil", "insurance", "self"],
+                phone: "053-908-500",
+                note: "โรงพยาบาลจิตเวชหลักประจำภาคเหนือ ให้บริการให้คำปรึกษาครบวงจร"
+            },
+            {
+                name: "โรงพยาบาลจิตเวชนครราชสีมาราชนครินทร์",
+                type: "รพ.เฉพาะทาง (รัฐ)",
+                region: "northeast",
+                province: "นครราชสีมา",
+                address: "อำเภอเมือง จังหวัดนครราชสีมา",
+                rights: ["gold", "social", "civil", "insurance", "self"],
+                phone: "044-233-999",
+                note: "เชี่ยวชาญด้านสุขภาพจิตและจิตเวชเด็กและวัยรุ่น"
+            },
+            {
+                name: "โรงพยาบาลจิตเวชสงข้าราชนครินทร์",
+                type: "รพ.เฉพาะทาง (รัฐ)",
+                region: "south",
+                province: "สงขลา",
+                address: "อำเภอเมือง จังหวัดสงขลา",
+                rights: ["gold", "social", "civil", "insurance", "self"],
+                phone: "074-317-400",
+                note: "บริการจิตเวชและสุขภาพจิตครอบคลุมภาคใต้ตอนล่าง"
+            },
+            {
+                name: "โรงพยาบาลจุฬาลงกรณ์ สภากาชาดไทย",
+                type: "รพ.มหาวิทยาลัย / ทั่วไป",
+                region: "bkk",
+                province: "กรุงเทพมหานคร",
+                address: "เขตปทุมวัน กรุงเทพฯ",
+                rights: ["gold", "social", "civil", "insurance", "self"],
+                phone: "02-256-4000",
+                note: "มีคลินิกจิตเวชและจิตวิทยาชั้นนำ รองรับประกันสุขภาพเอกชน"
+            },
+            {
+                name: "โรงพยาบาลศิริราช",
+                type: "รพ.มหาวิทยาลัย / ทั่วไป",
+                region: "bkk",
+                province: "กรุงเทพมหานคร",
+                address: "เขตบางกอกน้อย กรุงเทพฯ",
+                rights: ["gold", "social", "civil", "insurance", "self"],
+                phone: "02-419-7000",
+                note: "ภาควิชาจิตเวชศาสตร์ ให้บริการตรวจรักษาโรคทางจิตเวชทุกประเภท"
+            },
+            {
+                name: "โรงพยาบาลรามาธิบดี",
+                type: "รพ.มหาวิทยาลัย / ทั่วไป",
+                region: "bkk",
+                province: "กรุงเทพมหานคร",
+                address: "เขตราชเทวี กรุงเทพฯ",
+                rights: ["gold", "social", "civil", "insurance", "self"],
+                phone: "02-201-1000",
+                note: "มีหน่วยให้คำปรึกษาด้านสุขภาพจิต วิตกกังวล และภาวะซึมเศร้า"
+            },
+            {
+                name: "โรงพยาบาลพระจอมเกล้าเจ้าคุณทหาร (KMITL Hospital)",
+                type: "รพ.มหาวิทยาลัย / ทั่วไป",
+                region: "bkk",
+                province: "กรุงเทพมหานคร",
+                address: "เขตลาดกระบัง กรุงเทพฯ",
+                rights: ["gold", "social", "civil", "insurance", "self"],
+                phone: "02-329-8000",
+                note: "โรงพยาบาลนวัตกรรมและการแพทย์สมัยใหม่ พร้อมดูแลสุขภาพใจ"
+            },
+            {
+                name: "โรงพยาบาลพญาไท (ทุกสาขา)",
+                type: "รพ.เอกชน",
+                region: "bkk",
+                province: "กรุงเทพมหานคร / ปริมณฑล",
+                address: "พญาไท นวมินทร์ ศรีราชา ฯลฯ",
+                rights: ["insurance", "self"],
+                phone: "1772",
+                note: "บริการจิตเวชและคลินิกคลายเครียดโดยแพทย์เฉพาะทาง"
+            },
+            {
+                name: "โรงพยาบาลกรุงเทพ (ทุกสาขา)",
+                type: "รพ.เอกชน",
+                region: "bkk",
+                province: "กรุงเทพมหานคร และภูมิภาค",
+                address: "ถนนเพชรบุรีตัดใหม่ และสาขาต่างจังหวัด",
+                rights: ["insurance", "self"],
+                phone: "1719",
+                note: "ศูนย์สุขภาพใจ (Mental Health Clinic) และบริการ Tele-Mental Health"
+            },
+            {
+                name: "โรงพยาบาลสมิติเวช (สุขุมวิท / ศรีนครินทร์)",
+                type: "รพ.เอกชน",
+                region: "bkk",
+                province: "กรุงเทพมหานคร",
+                address: "สุขุมวิท 49 และศรีนครินทร์",
+                rights: ["insurance", "self"],
+                phone: "02-022-2222",
+                note: "มีโปรแกรมประเมินความเครียดและจิตแพทย์ให้คำปรึกษาออนไลน์"
+            },
+            {
+                name: "โรงพยาบาลมหาราชนครเชียงใหม่ (สวนดอก)",
+                type: "รพ.มหาวิทยาลัย",
+                region: "north",
+                province: "เชียงใหม่",
+                address: "อำเภอเมือง จังหวัดเชียงใหม่",
+                rights: ["gold", "social", "civil", "insurance", "self"],
+                phone: "053-936-000",
+                note: "ภาควิชาจิตเวชศาสตร์ คณะแพทยศาสตร์ มช."
+            },
+            {
+                name: "โรงพยาบาลสงขลานครินทร์ (มอ.)",
+                type: "รพ.มหาวิทยาลัย",
+                region: "south",
+                province: "สงขลา",
+                address: "อำเภอหาดใหญ่ จังหวัดสงขลา",
+                rights: ["gold", "social", "civil", "insurance", "self"],
+                phone: "074-451-000",
+                note: "บริการตรวจรักษาโรคซึมเศร้าและสุขภาพจิตในภาคใต้"
+            }
+        ];
+
+        function renderHospitals(list) {
+            const container = document.getElementById('hospital-list-container');
+            if(list.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-6">ไม่พบโรงพยาบาลที่ตรงกับเงื่อนไขการค้นหา</p>`;
+                return;
+            }
+
+            let html = '';
+            list.forEach(h => {
+                let rightBadges = '';
+                if(h.rights.includes('gold')) rightBadges += `<span class="bg-mint-100 text-mint-700 text-[10px] px-2 py-0.5 rounded-full font-medium mr-1">บัตรทอง</span>`;
+                if(h.rights.includes('social')) rightBadges += `<span class="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-0.5 rounded-full font-medium mr-1">ประกันสังคม</span>`;
+                if(h.rights.includes('civil')) rightBadges += `<span class="bg-teal-100 text-teal-700 text-[10px] px-2 py-0.5 rounded-full font-medium mr-1">ข้าราชการ</span>`;
+                if(h.rights.includes('insurance')) rightBadges += `<span class="bg-sage-100 text-sage-700 text-[10px] px-2 py-0.5 rounded-full font-medium mr-1">ประกันเอกชน</span>`;
+
+                html += `
+                    <div class="p-4 rounded-2xl border border-mint-200 bg-white/90 hover:shadow-md transition flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-3 sm:space-y-0">
+                        <div class="space-y-1.5 max-w-md">
+                            <div class="flex items-center space-x-2 flex-wrap gap-y-1">
+                                <h4 class="font-bold text-sm text-sage-700">${h.name}</h4>
+                                <span class="bg-mint-50 text-mint-700 border border-mint-200 text-[10px] px-2 py-0.5 rounded-full font-medium">${h.type}</span>
+                            </div>
+                            <p class="text-xs text-gray-500">📍 ${h.address} (${h.province})</p>
+                            <p class="text-xs text-emerald-600 font-medium">📞 ${h.phone} | ${h.note}</p>
+                            <div class="pt-1">${rightBadges}</div>
+                        </div>
+                        <button onclick="openBookingModal('${h.name}')" class="bg-mint-600 hover:bg-mint-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition shadow shrink-0">
+                            จองคิวพบแพทย์
+                        </button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function filterHospitals() {
+            const searchTerm = document.getElementById('hospital-search-input').value.toLowerCase();
+            const region = document.getElementById('region-filter').value;
+            const right = document.getElementById('treatment-right').value;
+
+            const filtered = hospitalsData.filter(h => {
+                const matchSearch = h.name.toLowerCase().includes(searchTerm) || h.province.toLowerCase().includes(searchTerm) || h.address.toLowerCase().includes(searchTerm);
+                const matchRegion = (region === 'all' || h.region === region);
+                const matchRight = (right === 'all' || h.rights.includes(right));
+                return matchSearch && matchRegion && matchRight;
+            });
+
+            renderHospitals(filtered);
+        }
+
+        // Toast Notification System
+        function showToast(title, message, iconName = 'check-circle') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-title').innerText = title;
+            document.getElementById('toast-message').innerText = message;
+            document.getElementById('toast-icon').innerHTML = `<i data-lucide="${iconName}" class="w-5 h-5"></i>`;
+            lucide.createIcons();
+            toast.classList.remove('translate-y-[-200%]');
+            setTimeout(() => {
+                toast.classList.add('translate-y-[-200%]');
+            }, 3500);
+        }
+
+        // Tab Navigation
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-mint-500', 'text-white', 'shadow-md', 'shadow-mint-200');
+                btn.classList.add('text-sage-600', 'hover:bg-mint-50');
+                if(btn.getAttribute('data-tab') === tabId) {
+                    btn.classList.add('bg-mint-500', 'text-white', 'shadow-md', 'shadow-mint-200');
+                    btn.classList.remove('text-sage-600', 'hover:bg-mint-50');
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Quotes Generator
+        const quotes = [
+            "\"การพักผ่อนไม่ใช่ความอ่อนแอ แต่เป็นการชาร์จพลังให้หัวใจได้เติบโตต่อ\"",
+            "\"ทุกความรู้สึกล้วนมีความหมาย ให้เวลาตัวเองได้โอบกอดความรู้สึกนั้น\"",
+            "\"คุณไม่ได้อยู่ตัวคนเดียว มีผู้คนมากมายพร้อมเข้าใจและรับฟังคุณเสมอ\"",
+            "\"ความสุขเล็กๆ ซ่อนอยู่รอบตัวเราเสมอ ลองมองหาและยิ้มให้มันนะ\"",
+            "\"การผ่านพ้นแต่ละวันไปได้ คือความเก่งกาจในแบบของคุณแล้ว\""
+        ];
+        function refreshQuote() {
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById('daily-quote').innerText = randomQuote;
+            showToast('เปลี่ยนคำคมสำเร็จ', 'เติมพลังใจเรียบร้อยแล้วครับ', 'sparkles');
+        }
+
+        // --- PHQ-9 Assessment Logic ---
+        const phq9Questions = [
+            "เบื่อ ไม่ค่อยสนใจหรือเพลิดเพลินในการทำสิ่งต่างๆ",
+            "รู้สึกหดหู่ เศร้า หรือสิ้นหวัง",
+            "หลับยาก หรือหลับๆ ตื่นๆ หรือหลับมากเกินไป",
+            "รู้สึกเหนื่อยง่าย หรือไม่ค่อยมีแรง",
+            "เบื่ออาหาร หรือกินมากเกินไป",
+            "รู้สึกไม่ดีกับตัวเอง คิดว่าตัวเองล้มเหลว หรือทำให้ตนเองและครอบครัวผิดหวัง",
+            "สมาธิไม่ดีเวลาทำอะไร เช่น ดูโทรทัศน์ อ่านหนังสือ หรือทำงานที่ต้องใช้ความสนใจ",
+            "พูดหรือทำอะไรช้ากว่าปกติจนคนอื่นสังเกตเห็นได้ หรือกระสับกระส่ายจนอยู่ไม่นิ่ง",
+            "คิดทำร้ายตนเอง หรือคิดว่าถ้าตายไปคงจะดี"
+        ];
+
+        function renderQuestions() {
+            const container = document.getElementById('questions-list');
+            let html = '';
+            phq9Questions.forEach((q, index) => {
+                html += `
+                    <div class="p-4 rounded-2xl bg-white/70 border border-mint-100 space-y-3">
+                        <p class="text-sm font-semibold text-sage-700">${index + 1}. ${q}</p>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            <label class="flex items-center space-x-2 p-2 rounded-xl border border-mint-100 bg-white hover:bg-mint-50 cursor-pointer text-xs">
+                                <input type="radio" name="q${index}" value="0" onchange="updateAssessmentProgress()" class="text-mint-600 focus:ring-mint-400">
+                                <span>ไม่มีเลย (0)</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-2 rounded-xl border border-mint-100 bg-white hover:bg-mint-50 cursor-pointer text-xs">
+                                <input type="radio" name="q${index}" value="1" onchange="updateAssessmentProgress()" class="text-mint-600 focus:ring-mint-400">
+                                <span>เป็นบางวัน (1)</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-2 rounded-xl border border-mint-100 bg-white hover:bg-mint-50 cursor-pointer text-xs">
+                                <input type="radio" name="q${index}" value="2" onchange="updateAssessmentProgress()" class="text-mint-600 focus:ring-mint-400">
+                                <span>เป็นบ่อย (2)</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-2 rounded-xl border border-mint-100 bg-white hover:bg-mint-50 cursor-pointer text-xs">
+                                <input type="radio" name="q${index}" value="3" onchange="updateAssessmentProgress()" class="text-mint-600 focus:ring-mint-400">
+                                <span>เป็นทุกวัน (3)</span>
+                            </label>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function updateAssessmentProgress() {
+            let answered = 0;
+            for(let i=0; i<phq9Questions.length; i++) {
+                if(document.querySelector(`input[name="q${i}"]:checked`)) answered++;
+            }
+            document.getElementById('assessment-progress').innerText = `ตอบแล้ว ${answered} / 9 ข้อ`;
+        }
+
+        function submitAssessment() {
+            let totalScore = 0;
+            let answered = 0;
+            for(let i=0; i<phq9Questions.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    totalScore += parseInt(selected.value);
+                    answered++;
+                }
+            }
+
+            if(answered < 9) {
+                showToast('กรุณาตอบให้ครบทุกข้อ', 'โปรดตอบคำถามทั้ง 9 ข้อเพื่อให้ผลประเมินมีความแม่นยำสูงสุด', 'alert-circle');
+                return;
+            }
+
+            // Determine Severity
+            let severityText = "";
+            let badgeColor = "";
+            let recommendation = "";
+            let showHospital = false;
+
+            if(totalScore <= 7) {
+                severityText = `คะแนนรวม ${totalScore} คะแนน: ภาวะซึมเศร้าปกติหรือน้อยมาก`;
+                badgeColor = "bg-emerald-500 text-white";
+                recommendation = "สุขภาพจิตอยู่ในเกณฑ์ปกติครับ แนะนำให้พักผ่อนให้เพียงพอ ทำกิจกรรมที่ชื่นชอบ และดูแลสุขภาพใจอย่างสม่ำเสมอ";
+            } else if(totalScore <= 12) {
+                severityText = `คะแนนรวม ${totalScore} คะแนน: มีภาวะซึมเศร้าเล็กน้อย`;
+                badgeColor = "bg-teal-500 text-white";
+                recommendation = "พบภาวะซึมเศร้าระดับเล็กน้อย แนะนำให้พูดคุยกับคนใกล้ชิด ทำกิจกรรมผ่อนคลาย หรือฝึกกำหนดลมหายใจเพื่อลดความเครียด";
+            } else if(totalScore <= 18) {
+                severityText = `คะแนนรวม ${totalScore} คะแนน: มีภาวะซึมเศร้าปานกลาง`;
+                badgeColor = "bg-amber-500 text-white";
+                recommendation = "พบภาวะซึมเศร้าระดับปานกลาง แนะนำให้รับคำปรึกษาจากผู้เชี่ยวชาญด้านสุขภาพจิตหรือพบแพทย์เพื่อรับคำแนะนำที่เหมาะสม";
+                showHospital = true;
+            } else {
+                severityText = `คะแนนรวม ${totalScore} คะแนน: มีภาวะซึมเศร้ารุนแรง`;
+                badgeColor = "bg-rose-600 text-white";
+                recommendation = "พบภาวะซึมเศร้าระดับรุนแรง ควรพบแพทย์จิตเวชโดยเร็ว หรือติดต่อสายด่วนสุขภาพจิต 1323 เพื่อรับความช่วยเหลือทันที";
+                showHospital = true;
+            }
+
+            // Save result to localStorage
+            const evalData = { score: totalScore, text: severityText, date: new Date().toLocaleDateString('th-TH') };
+            localStorage.setItem('mindcare_last_eval', JSON.stringify(evalData));
+
+            // Render result UI
+            document.getElementById('result-badge-icon').innerHTML = `<i data-lucide="check" class="w-8 h-8"></i>`;
+            document.getElementById('result-badge-icon').className = `w-16 h-16 mx-auto rounded-full flex items-center justify-center text-white text-2xl shadow-md ${badgeColor}`;
+            document.getElementById('result-score-box').innerText = severityText;
+            document.getElementById('result-score-box').className = `inline-block px-4 py-1.5 rounded-full text-sm font-semibold ${badgeColor}`;
+            document.getElementById('result-recommendation').innerText = recommendation;
+
+            const hospBox = document.getElementById('hospital-recommendation-box');
+            if(showHospital) hospBox.classList.remove('hidden');
+            else hospBox.classList.add('hidden');
+
+            document.getElementById('assessment-container').classList.add('hidden');
+            document.getElementById('assessment-result').classList.remove('hidden');
+            lucide.createIcons();
+            loadDashboardData();
+            showToast('ประเมินสำเร็จ', 'ระบบได้บันทึกผลการประเมินสุขภาพจิตของคุณแล้ว', 'clipboard-check');
+        }
+
+        function resetAssessment() {
+            renderQuestions();
+            document.getElementById('assessment-container').classList.remove('hidden');
+            document.getElementById('assessment-result').classList.add('hidden');
+            document.getElementById('assessment-progress').innerText = 'ตอบแล้ว 0 / 9 ข้อ';
+        }
+
+        // --- Mood & Daily Journal Logic ---
+        let selectedMoodState = { text: 'มีความสุข', emoji: '😊' };
+
+        function selectMood(moodText, emoji, btnClass) {
+            selectedMoodState = { text: moodText, emoji: emoji };
+            document.querySelectorAll('.mood-btn').forEach(b => {
+                b.className = "mood-btn p-3.5 rounded-2xl border border-mint-200 bg-white hover:bg-mint-50 transition flex flex-col items-center space-y-1.5 text-sage-700 font-medium text-xs";
+            });
+            event.currentTarget.className = `mood-btn p-3.5 rounded-2xl border border-mint-200 transition flex flex-col items-center space-y-1.5 text-white font-medium text-xs ${btnClass}`;
+        }
+
+        function saveDiaryEntry() {
+            const text = document.getElementById('diary-text').value.trim();
+            if(!text) {
+                showToast('กรุณากรอกข้อความไดอารี่', 'โปรดพิมพ์ความรู้สึกหรือเรื่องราวในวันนี้ก่อนบันทึก', 'alert-circle');
+                return;
+            }
+
+            // Simple Sentiment & Stress AI Analysis Mock
+            let stressLevel = "ต่ำ (ผ่อนคลาย)";
+            let aiAdvice = "อารมณ์ของคุณอยู่ในเกณฑ์ที่ดีมาก รักษาพลังบวกนี้ไว้และพักผ่อนให้เพียงพอ";
+            if(selectedMoodState.text.includes('เครียด') || text.includes('เครียด') || text.includes('เหนื่อย')) {
+                stressLevel = "ปานกลางถึงสูง";
+                aiAdvice = "ตรวจพบความเครียดในบันทึก แนะนำให้ลองเล่นเกมฝึกหายใจ 4-7-8 หรือทำกิจกรรมผ่อนคลาย";
+            } else if(selectedMoodState.text.includes('เศร้า') || text.includes('เศร้า') || text.includes('ร้องไห้')) {
+                stressLevel = "ค่อนข้างสูง (ควรระวังภาวะซึมเศร้า)";
+                aiAdvice = "คุณกำลังผ่านช่วงเวลาที่ยากลำบาก อย่าลืมโอบกอดตัวเองและพูดคุยกับคนที่ไว้ใจ หรือติดต่อสายด่วน 1323";
+            }
+
+            const diaryList = JSON.parse(localStorage.getItem('mindcare_diaries') || '[]');
+            const newEntry = {
+                id: Date.now(),
+                mood: selectedMoodState.text,
+                emoji: selectedMoodState.emoji,
+                text: text,
+                stress: stressLevel,
+                date: new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+            };
+
+            diaryList.unshift(newEntry);
+            localStorage.setItem('mindcare_diaries', JSON.stringify(diaryList));
+            document.getElementById('diary-text').value = '';
+
+            loadDiaryHistory();
+            loadDashboardData();
+            showToast('บันทึกไดอารี่สำเร็จ', 'ระบบได้บันทึกความรู้สึกและวิเคราะห์ความเครียดเรียบร้อยแล้ว', 'book-open');
+
+            // Render AI Analysis Box
+            document.getElementById('ai-analysis-box').innerHTML = `
+                <p class="text-xs font-semibold text-emerald-800">📊 ผลการวิเคราะห์ล่าสุด:</p>
+                <p class="text-xs text-gray-600">ระดับความเครียด: <span class="font-bold text-emerald-700">${stressLevel}</span></p>
+                <p class="text-xs text-gray-600 mt-1">${aiAdvice}</p>
+            `;
+        }
+
+        function loadDiaryHistory() {
+            const diaryList = JSON.parse(localStorage.getItem('mindcare_diaries') || '[]');
+            const container = document.getElementById('diary-list');
+            document.getElementById('diary-count').innerText = `${diaryList.length} รายการ`;
+
+            if(diaryList.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-6">ยังไม่มีประวัติการบันทึกไดอารี่ เริ่มบันทึกความรู้สึกของคุณวันนี้ได้เลย</p>`;
+                return;
+            }
+
+            let html = '';
+            diaryList.forEach(item => {
+                html += `
+                    <div class="p-4 rounded-2xl bg-white/80 border border-mint-100 space-y-2 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xl">${item.emoji}</span>
+                                <span class="font-bold text-sm text-sage-700">${item.mood}</span>
+                            </div>
+                            <span class="text-[10px] text-gray-400">${item.date}</span>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">${item.text}</p>
+                        <div class="pt-1 flex items-center justify-between text-[11px] text-emerald-600 border-t border-mint-50">
+                            <span>ความเครียดประเมิน: <b>${item.stress}</b></span>
+                            <button onclick="deleteDiary(${item.id})" class="text-rose-500 hover:text-rose-700">ลบ</button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function deleteDiary(id) {
+            let diaryList = JSON.parse(localStorage.getItem('mindcare_diaries') || '[]');
+            diaryList = diaryList.filter(d => d.id !== id);
+            localStorage.setItem('mindcare_diaries', JSON.stringify(diaryList));
+            loadDiaryHistory();
+            loadDashboardData();
+            showToast('ลบไดอารี่แล้ว', 'รายการถูกลบออกจากระบบเรียบร้อย', 'trash-2');
+        }
+
+        // --- Relaxation Mini-Games Logic ---
+        function switchGame(gameName) {
+            document.getElementById('game-breathing').classList.add('hidden');
+            document.getElementById('game-bubble').classList.add('hidden');
+            document.getElementById('game-platesmash').classList.add('hidden');
+            document.getElementById('game-meditation').classList.add('hidden');
+
+            document.getElementById('btn-game-breathing').className = "game-tab-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition bg-white border border-teal-200 text-sage-700 hover:bg-teal-50";
+            document.getElementById('btn-game-bubble').className = "game-tab-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition bg-white border border-teal-200 text-sage-700 hover:bg-teal-50";
+            document.getElementById('btn-game-platesmash').className = "game-tab-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition bg-white border border-teal-200 text-sage-700 hover:bg-teal-50";
+            document.getElementById('btn-game-meditation').className = "game-tab-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition bg-white border border-teal-200 text-sage-700 hover:bg-teal-50";
+
+            if(gameName === 'breathing') {
+                document.getElementById('game-breathing').classList.remove('hidden');
+                document.getElementById('btn-game-breathing').className = "game-tab-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition bg-teal-500 text-white shadow-md shadow-teal-200";
+            } else if(gameName === 'bubble') {
+                document.getElementById('game-bubble').classList.remove('hidden');
+                document.getElementById('btn-game-bubble').className = "game-tab-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition bg-teal-500 text-white shadow-md shadow-teal-200";
+            } else if(gameName === 'platesmash') {
+                document.getElementById('game-platesmash').classList.remove('hidden');
+                document.getElementById('btn-game-platesmash').className = "game-tab-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition bg-teal-500 text-white shadow-md shadow-teal-200";
+            } else {
+                document.getElementById('game-meditation').classList.remove('hidden');
+                document.getElementById('btn-game-meditation').className = "game-tab-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition bg-teal-500 text-white shadow-md shadow-teal-200";
+            }
+        }
+
+        // --- Web Audio API Nature Sounds Generator ---
+        let audioCtx = null;
+        let ambientSourceNode = null;
+        let ambientGainNode = null;
+        let ambientFilterNode = null;
+        let isAudioPlaying = false;
+        let currentTrackType = 'rain';
+        let meditationTimerTimeout = null;
+
+        const trackMeta = {
+            rain: { title: "🌧️ เสียงฝนตกปรอยๆ (Rainfall)", filterType: 'lowpass', freq: 1000, lfoRate: 3 },
+            waves: { title: "🌊 เสียงคลื่นทะเล (Ocean Waves)", filterType: 'bandpass', freq: 400, lfoRate: 0.2 },
+            forest: { title: "🌲 เสียงลมในป่าสน (Forest Wind)", filterType: 'lowpass', freq: 600, lfoRate: 0.15 },
+            stream: { title: "💧 เสียงธารน้ำไหล (Stream Water)", filterType: 'bandpass', freq: 1500, lfoRate: 6 }
+        };
+
+        function selectSoundTrack(trackKey) {
+            currentTrackType = trackKey;
+            document.querySelectorAll('.track-btn').forEach(b => {
+                b.className = "track-btn p-4 rounded-2xl border-2 border-teal-100 bg-white flex flex-col items-center space-y-2 transition shadow-sm hover:bg-teal-50/50";
+            });
+            document.getElementById(`track-btn-${trackKey}`).className = "track-btn p-4 rounded-2xl border-2 border-teal-300 bg-teal-50 flex flex-col items-center space-y-2 transition shadow-sm";
+            document.getElementById('active-track-title').innerText = trackMeta[trackKey].title;
+
+            if(isAudioPlaying) {
+                stopAudioPlayback();
+                toggleAudioPlayback();
+            }
+        }
+
+        function toggleAudioPlayback() {
+            if(isAudioPlaying) {
+                stopAudioPlayback();
+            } else {
+                startAudioPlayback();
+            }
+        }
+
+        function startAudioPlayback() {
+            try {
+                if(!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if(audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                // Create white noise buffer (5 seconds)
+                const bufferSize = audioCtx.sampleRate * 5;
+                const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const output = noiseBuffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    output[i] = Math.random() * 2 - 1;
+                }
+
+                ambientSourceNode = audioCtx.createBufferSource();
+                ambientSourceNode.buffer = noiseBuffer;
+                ambientSourceNode.loop = true;
+
+                // Filter for sound texture
+                ambientFilterNode = audioCtx.createBiquadFilter();
+                const meta = trackMeta[currentTrackType];
+                ambientFilterNode.type = meta.filterType;
+                ambientFilterNode.frequency.setValueAtTime(meta.freq, audioCtx.currentTime);
+
+                // Gain Node for volume control
+                ambientGainNode = audioCtx.createGain();
+                const vol = parseFloat(document.getElementById('audio-volume').value);
+                ambientGainNode.gain.setValueAtTime(vol, audioCtx.currentTime);
+
+                // Connect nodes
+                ambientSourceNode.connect(ambientFilterNode);
+                ambientFilterNode.connect(ambientGainNode);
+                ambientGainNode.connect(audioCtx.destination);
+
+                ambientSourceNode.start();
+                isAudioPlaying = true;
+
+                // Update UI button
+                document.getElementById('audio-btn-icon').setAttribute('data-lucide', 'pause');
+                document.getElementById('audio-btn-text').innerText = 'หยุดเสียงชั่วคราว';
+                lucide.createIcons();
+                showToast('เริ่มเล่นเสียงธรรมชาติ', `กำลังเล่น ${trackMeta[currentTrackType].title}`, 'volume-2');
+            } catch(e) {
+                console.error("Audio error:", e);
+                showToast('ไม่สามารถเล่นเสียงได้', 'เบราว์เซอร์อาจไม่อนุญาตให้อัตโนมัติ กรุณาลองใหม่อีกครั้ง', 'alert-circle');
+            }
+        }
+
+        function stopAudioPlayback() {
+            if(ambientSourceNode) {
+                try {
+                    ambientSourceNode.stop();
+                    ambientSourceNode.disconnect();
+                } catch(e) {}
+                ambientSourceNode = null;
+            }
+            isAudioPlaying = false;
+            document.getElementById('audio-btn-icon').setAttribute('data-lucide', 'play');
+            document.getElementById('audio-btn-text').innerText = 'เริ่มเล่นเสียงธรรมชาติ';
+            lucide.createIcons();
+            if(meditationTimerTimeout) clearTimeout(meditationTimerTimeout);
+        }
+
+        function updateVolume(val) {
+            if(ambientGainNode && audioCtx) {
+                ambientGainNode.gain.setValueAtTime(parseFloat(val), audioCtx.currentTime);
+            }
+        }
+
+        function setMeditationTimer(minutes) {
+            if(meditationTimerTimeout) clearTimeout(meditationTimerTimeout);
+            const mins = parseInt(minutes);
+            if(mins > 0 && isAudioPlaying) {
+                meditationTimerTimeout = setTimeout(() => {
+                    stopAudioPlayback();
+                    showToast('ครบกำหนดเวลาสมาธิ', 'เสียงธรรมชาติปิดอัตโนมัติแล้ว ขอให้ท่านรู้สึกผ่อนคลายและสดชื่น', 'check-circle');
+                }, mins * 60 * 1000);
+                showToast('ตั้งเวลาเรียบร้อย', `เสียงจะหยุดอัตโนมัติในอีก ${mins} นาที`, 'clock');
+            }
+        }
+
+        // Breathing Exercise State
+        let breathingInterval = null;
+        function startBreathing() {
+            const circle = document.getElementById('breath-circle');
+            const countText = document.getElementById('breath-count');
+            const statusText = document.getElementById('breath-status');
+            const startBtn = document.getElementById('breath-start-btn');
+            
+            startBtn.disabled = true;
+            let phase = 0; // 0: inhale (4s), 1: hold (7s), 2: exhale (8s)
+            let timer = 4;
+
+            statusText.innerText = "สูดลมหายใจเข้าลึกๆ ช้าๆ (4 วินาที)";
+            circle.style.transform = "scale(1.3)";
+
+            clearInterval(breathingInterval);
+            breathingInterval = setInterval(() => {
+                timer--;
+                countText.innerText = timer;
+
+                if(timer <= 0) {
+                    if(phase === 0) {
+                        phase = 1;
+                        timer = 7;
+                        statusText.innerText = "กลั้นหายใจไว้ ทำสมาธิ (7 วินาที)";
+                        circle.style.transform = "scale(1.3)";
+                    } else if(phase === 1) {
+                        phase = 2;
+                        timer = 8;
+                        statusText.innerText = "ผ่อนลมหายใจออกยาวๆ ทางปาก (8 วินาที)";
+                        circle.style.transform = "scale(1.0)";
+                    } else {
+                        phase = 0;
+                        timer = 4;
+                        statusText.innerText = "สูดลมหายใจเข้าลึกๆ ช้าๆ (4 วินาที)";
+                        circle.style.transform = "scale(1.3)";
+                    }
+                }
+            }, 1000);
+        }
+
+        function stopBreathing() {
+            clearInterval(breathingInterval);
+            document.getElementById('breath-circle').style.transform = "scale(1.0)";
+            document.getElementById('breath-count').innerText = "กดเริ่ม";
+            document.getElementById('breath-status').innerText = "หยุดการฝึกแล้ว สามารถเริ่มใหม่ได้เสมอ";
+            document.getElementById('breath-start-btn').disabled = false;
+        }
+
+        // Bubble Pop Game State
+        let bubbleScore = 0;
+        function initBubbles() {
+            const grid = document.getElementById('bubble-grid');
+            let html = '';
+            for(let i=0; i<24; i++) {
+                html += `
+                    <div onclick="popBubble(this)" class="w-12 h-12 sm:w-14 sm:h-14 mx-auto bg-gradient-to-tr from-teal-200 to-teal-400 rounded-full cursor-pointer shadow-md hover:scale-90 transition flex items-center justify-center text-white font-bold text-xs shadow-teal-200 bubble-item">
+                        🫧
+                    </div>
+                `;
+            }
+            grid.innerHTML = html;
+            bubbleScore = 0;
+            document.getElementById('bubble-score').innerText = bubbleScore;
+        }
+
+        function popBubble(el) {
+            if(!el.classList.contains('popped')) {
+                el.classList.add('popped');
+                el.style.background = '#e5ebe6';
+                el.style.transform = 'scale(0.8)';
+                el.innerHTML = '✨';
+                bubbleScore++;
+                document.getElementById('bubble-score').innerText = bubbleScore;
+            }
+        }
+
+        function resetBubbles() {
+            initBubbles();
+            showToast('เติมบับเบิ้ลใหม่แล้ว', 'สนุกกับการจิ้มบับเบิ้ลคลายเครียดกันต่อเลย', 'gamepad-2');
+        }
+
+        // Plate Hammering & Stress Writing Game Logic
+        let plateScore = 0;
+        const plateAffirmations = [
+            "\"ทุบความเครียดและความขุ่นข้องหมองใจทิ้งไป ให้ใจเบาสบายขึ้น\"",
+            "\"ปัญหาและความเครียดได้แตกสลายไปหมดแล้ว พื้นที่ในใจตอนนี้โล่งและสงบขึ้น\"",
+            "\"เก่งมาก! ปลดปล่อยอารมณ์ลบออกไป แล้วเติมพลังบวกเข้ามาแทนที่\"",
+            "\"ความเครียดเป็นเพียงสิ่งที่แวะมาทักทาย เดี๋ยวก็ผ่านพ้นไป\"",
+            "\"ยอดเยี่ยม! คุณได้ระบายความอึดอัดออกมาได้อย่างปลอดภัยแล้ว หัวใจจะเบาขึ้นนะ\""
+        ];
+
+        function applyStressText() {
+            const inputVal = document.getElementById('stress-input-text').value.trim();
+            const plateTextEl = document.getElementById('plate-written-text');
+            if(inputVal) {
+                plateTextEl.innerText = `"${inputVal}"`;
+                showToast('เขียนข้อความลงจานแล้ว', 'เตรียมใช้ค้อนทุบทำลายความเครียดนี้ทิ้งได้เลย!', 'edit-3');
+            } else {
+                showToast('ยังไม่ได้พิมพ์ข้อความ', 'กรุณาพิมพ์สิ่งที่ต้องการระบายก่อน หรือใช้ข้อความเดิมได้ครับ', 'alert-circle');
+            }
+        }
+
+        function smashPlate(e) {
+            const plateDisplay = document.getElementById('plate-display');
+            plateScore++;
+            document.getElementById('plate-score').innerText = plateScore;
+
+            // Random positive affirmation
+            const randomAff = plateAffirmations[Math.floor(Math.random() * plateAffirmations.length)];
+            document.getElementById('plate-affirmation').innerText = randomAff;
+
+            // Create explosion shards effect
+            const shardsContainer = document.getElementById('shards-container');
+            
+            // Temporary smash animation on plate
+            plateDisplay.style.transform = "scale(1.4) rotate(20deg)";
+            plateDisplay.style.opacity = "0";
+
+            // Generate shards elements with hammer effect
+            let shardsHtml = '';
+            for(let i=0; i<16; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 90 + Math.random() * 140;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                const rot = Math.random() * 360;
+                shardsHtml += `<div class="absolute w-7 h-7 bg-gray-200 border border-gray-400 rounded-sm shadow-md transition-all duration-700 ease-out flex items-center justify-center text-xs" style="left: calc(50% - 14px); top: calc(50% - 14px); transform: translate(${tx}px, ${ty}px) rotate(${rot}deg); opacity: 0;">💥</div>`;
+            }
+            shardsContainer.innerHTML = shardsHtml;
+
+            // Trigger shards fade in/out animation
+            setTimeout(() => {
+                const shardEls = shardsContainer.children;
+                for(let el of shardEls) {
+                    el.style.opacity = '1';
+                }
+            }, 50);
+
+            showToast('ทุบจานแตกละเอียดแล้ว!', 'ปลดปล่อยความเครียดสำเร็จ รู้สึกโล่งขึ้นไหมครับ?', 'hammer');
+
+            // Reset plate after 800ms
+            setTimeout(() => {
+                plateDisplay.style.transform = "scale(1) rotate(0deg)";
+                plateDisplay.style.opacity = "1";
+                document.getElementById('stress-input-text').value = '';
+                document.getElementById('plate-written-text').innerText = '"ความเครียด & ความอึดอัด"';
+                shardsContainer.innerHTML = '';
+            }, 900);
+        }
+
+        function resetPlates() {
+            const plateDisplay = document.getElementById('plate-display');
+            plateDisplay.style.transform = "scale(1) rotate(0deg)";
+            plateDisplay.style.opacity = "1";
+            document.getElementById('stress-input-text').value = '';
+            document.getElementById('plate-written-text').innerText = '"ความเครียด & ความอึดอัด"';
+            document.getElementById('shards-container').innerHTML = '';
+            showToast('หยิบจานใบใหม่แล้ว', 'พร้อมพิมพ์ระบายและทุบทำลายความเครียดใบใหม่ได้เลยครับ', 'rotate-ccw');
+        }
+
+        // --- Telemedicine & Rights Calculator ---
+        function calculateRights() {
+            const right = document.getElementById('treatment-right').value;
+            const type = document.getElementById('consult-type').value;
+            const costDisplay = document.getElementById('right-cost-display');
+            const descDisplay = document.getElementById('right-desc-display');
+
+            if(right === 'gold') {
+                if(type === 'tele') {
+                    costDisplay.innerText = "0 บาท (ฟรีตามสิทธิบัตรทอง)";
+                    descDisplay.innerText = "สามารถใช้สิทธิบัตรทองผ่านแอปพลิเคชัน Telehealth ของโรงพยาบาลตามสิทธิ ไม่เสียค่าใช้จ่าย";
+                } else {
+                    costDisplay.innerText = "0 - 30 บาท";
+                    descDisplay.innerText = "ใช้สิทธิรักษาตามโรงพยาบาลที่ท่านมีสิทธิ เสียค่าธรรมเนียมตามระเบียบ 30 บาท (หากมีใส่งต่อจากรพ.สต. ฟรี)";
+                }
+            } else if(right === 'social') {
+                if(type === 'tele') {
+                    costDisplay.innerText = "0 บาท (ครอบคลุมในสิทธิประกันสังคม)";
+                    descDisplay.innerText = "ปรึกษาแพทย์ออนไลน์ผ่านรพ.คู่สัญญาประกันสังคม โดยไม่ต้องสำรองจ่าย";
+                } else {
+                    costDisplay.innerText = "0 บาท (ณ รพ.ตามสิทธิประกันสังคม)";
+                    descDisplay.innerText = "รับบริการตรวจรักษาจิตเวชตามรพ.ประกันสังคมที่ท่านเลือกไว้ ไม่เสียค่าใช้จ่ายเพิ่ม";
+                }
+            } else if(right === 'civil') {
+                costDisplay.innerText = "เบิกจ่ายตรงตามกรมบัญชีกลาง";
+                descDisplay.innerText = "ข้าราชการและครอบครัวสามารถเบิกจ่ายตรงได้ตามเงื่อนไขของทางราชการ";
+            } else if(right === 'insurance') {
+                costDisplay.innerText = "ตามเงื่อนไขกรมธรรม์ประกันสุขภาพ";
+                descDisplay.innerText = "ประกันสุขภาพเอกชนคุ้มครองทั้งผู้ป่วยนอก (OPD) และผู้ป่วยใน (IPD) ตามวงเงินในกรมธรรม์";
+            } else {
+                costDisplay.innerText = "800 - 2,500 บาท / ครั้ง";
+                descDisplay.innerText = "กรณีชำระเงินเอง ขึ้นอยู่กับอัตราค่าบริการของแพทย์และโรงพยาบาลเอกชนแต่ละแห่ง";
+            }
+        }
+        // --- Profile & Health Records Logic ---
+        function calculateAgeAndBmi() {
+            const dobVal = document.getElementById('prof-dob').value;
+            if(dobVal) {
+                const dob = new Date(dobVal);
+                const today = new Date();
+                let age = today.getFullYear() - dob.getFullYear();
+                const m = today.getMonth() - dob.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                    age--;
+                }
+                document.getElementById('prof-age').value = age >= 0 ? `${age} ปี` : '0 ปี';
+            }
+
+            const weight = parseFloat(document.getElementById('prof-weight').value);
+            const heightCm = parseFloat(document.getElementById('prof-height').value);
+            
+            if(weight > 0 && heightCm > 0) {
+                const heightM = heightCm / 100;
+                const bmi = (weight / (heightM * heightM)).toFixed(1);
+                let bmiText = "";
+                let bmiColor = "bg-white text-emerald-600 border-mint-200";
+
+                if(bmi < 18.5) {
+                    bmiText = `BMI ${bmi} - น้ำหนักน้อย / ผอม`;
+                    bmiColor = "bg-sky-50 text-sky-700 border-sky-200";
+                } else if(bmi < 23) {
+                    bmiText = `BMI ${bmi} - น้ำหนักปกติ (สมส่วน)`;
+                    bmiColor = "bg-emerald-50 text-emerald-700 border-emerald-200";
+                } else if(bmi < 25) {
+                    bmiText = `BMI ${bmi} - ท้วม / น้ำหนักเกิน`;
+                    bmiColor = "bg-amber-50 text-amber-700 border-amber-200";
+                } else if(bmi < 30) {
+                    bmiText = `BMI ${bmi} - อ้วนระดับ 1`;
+                    bmiColor = "bg-orange-50 text-orange-700 border-orange-200";
+                } else {
+                    bmiText = `BMI ${bmi} - อ้วนระดับ 2 (อันตราย)`;
+                    bmiColor = "bg-rose-50 text-rose-700 border-rose-200";
+                }
+
+                document.getElementById('prof-bmi-val').innerText = `${bmi} กก./ม.²`;
+                const statusBox = document.getElementById('prof-bmi-status');
+                statusBox.innerText = bmiText;
+                statusBox.className = `text-xs font-semibold px-3 py-1 rounded-full border ${bmiColor}`;
+            } else {
+                document.getElementById('prof-bmi-val').innerText = "-";
+                document.getElementById('prof-bmi-status').innerText = "-";
+            }
+        }
+
+        function saveProfile(e) {
+            e.preventDefault();
+            const profile = {
+                fullname: document.getElementById('prof-fullname').value,
+                dob: document.getElementById('prof-dob').value,
+                age: document.getElementById('prof-age').value,
+                weight: document.getElementById('prof-weight').value,
+                height: document.getElementById('prof-height').value,
+                bmiVal: document.getElementById('prof-bmi-val').innerText,
+                bmiStatus: document.getElementById('prof-bmi-status').innerText,
+                diseases: document.getElementById('prof-diseases').value
+            };
+
+            localStorage.setItem('mindcare_profile', JSON.stringify(profile));
+            loadDashboardData();
+            showToast('บันทึกข้อมูลส่วนตัวสำเร็จ', 'ข้อมูลสุขภาพของคุณถูกบันทึกเรียบร้อยแล้ว', 'user-check');
+        }
+
+        function loadProfileData() {
+            const profile = JSON.parse(localStorage.getItem('mindcare_profile') || 'null');
+            if(profile) {
+                document.getElementById('prof-fullname').value = profile.fullname || '';
+                document.getElementById('prof-dob').value = profile.dob || '';
+                document.getElementById('prof-age').value = profile.age || '';
+                document.getElementById('prof-weight').value = profile.weight || '';
+                document.getElementById('prof-height').value = profile.height || '';
+                document.getElementById('prof-diseases').value = profile.diseases || '';
+                if(profile.dob || profile.weight) calculateAgeAndBmi();
+            }
+        }
+
+        // --- Dashboard Sync Data ---
+        function loadDashboardData() {
+            // Profile Name
+            const profile = JSON.parse(localStorage.getItem('mindcare_profile') || 'null');
+            if(profile && profile.fullname) {
+                document.getElementById('welcome-user-name').innerText = `สวัสดีครับคุณ ${profile.fullname}`;
+            }
+
+            // Last Mood
+            const diaries = JSON.parse(localStorage.getItem('mindcare_diaries') || '[]');
+            if(diaries.length > 0) {
+                const last = diaries[0];
+                document.getElementById('dash-last-mood').innerText = `${last.emoji} ${last.mood}`;
+                document.getElementById('dash-last-mood-date').innerText = last.date;
+            }
+
+            // Last Evaluation
+            const lastEval = JSON.parse(localStorage.getItem('mindcare_last_eval') || 'null');
+            if(lastEval) {
+                document.getElementById('dash-last-eval').innerText = lastEval.text.split(':')[1] || lastEval.text;
+                document.getElementById('dash-last-eval-desc').innerText = `ประเมินเมื่อ: ${lastEval.date}`;
+            }
+
+            // Appointments
+            const appts = JSON.parse(localStorage.getItem('mindcare_appointments') || '[]');
+            if(appts.length > 0) {
+                const nextAppt = appts[appts.length - 1];
+                document.getElementById('dash-appointment').innerText = nextAppt.hospital;
+                document.getElementById('dash-appointment-time').innerText = `${nextAppt.date} (${nextAppt.time})`;
+            } else {
+                document.getElementById('dash-appointment').innerText = "ไม่มีนัดหมาย";
+                document.getElementById('dash-appointment-time').innerText = "สามารถจองคิวออนไลน์ได้ทันที";
+            }
+        }
+    </script>
+</body>
+</html>
